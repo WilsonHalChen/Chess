@@ -81,12 +81,15 @@ class Pawn(Piece):
 
 
 class Board:
+	col_index_convert = ['a','b','c','d','e','f','g','h']
+
 	def __init__(self, fen=None):
 		self.log = [] # stores log of all valid moves
 		self.board = [[0 for i in range(8)] for j in range(8)] # stores pieces by (col, row) as strs
-		self.enpassant = []
+		self.enpassant = '-'
 		self.half_moves = 0 # after 50 halfmoves by each player, game draws
 		self.castle_rights = "KQkq" # Uppercase denotes White rights, '-' denotes no castling
+		self.turn = 'w'
 		if fen is not None:
 			# import FEN Chess Notation
 			fields = fen.split()
@@ -99,6 +102,12 @@ class Board:
 					else:
 						self.board[col][row] = ch
 				col += 1
+			self.turn = fields[1]
+			self.castle_rights = fields[2]
+			en_passant_targets = fields[3].lower()
+			if en_passant_targets != '-':
+				self.enpassant = (col_index_convert.index(en_passant_targets[0]), en_passant_targets[1])
+			self.half_moves = fields[4]
 		else:
 			# init start board
 			for j in range(len(board[0])):
