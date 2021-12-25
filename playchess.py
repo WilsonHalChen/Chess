@@ -110,24 +110,24 @@ class Board:
 			self.half_moves = fields[4]
 		else:
 			# init start board
-			for j in range(len(board[0])):
-				board[j][1] = "P"
-				board[j][6] = "p"
+			for j in range(len(self.board[0])):
+				self.board[j][1] = "P"
+				self.board[j][6] = "p"
 				if j == 0 or j == 7:
-					board[j][0] = "R"
-					board[j][7] = "r"
+					self.board[j][0] = "R"
+					self.board[j][7] = "r"
 				if j == 1 or j == 6:
-					board[j][0] = "N"
-					board[j][7] = "n"
+					self.board[j][0] = "N"
+					self.board[j][7] = "n"
 				if j == 2 or j == 5:
-					board[j][0] = "B"
-					board[j][7] = "b"
+					self.board[j][0] = "B"
+					self.board[j][7] = "b"
 				if j == 3:
-					board[j][0] = "Q"
-					board[j][7] = "q"
+					self.board[j][0] = "Q"
+					self.board[j][7] = "q"
 				if j == 4:
-					board[j][0] = "K"
-					board[j][7] = "k"
+					self.board[j][0] = "K"
+					self.board[j][7] = "k"
 
 
 
@@ -196,9 +196,16 @@ class Board:
 	def printLog(self):
 		pass
 
+	def printBoard(self):
+		for i in range(len(self.board)-1, -1, -1):
+			for j in range(len(self.board[0])):
+				print(self.board[j][i], end=' ')
+			print()
+
 if __name__ == "__main__":
 	# Asks for move 
 	# keeps track of side to move
 	# can import and export boards
 	# can end and begin games
-	pass
+	game = Board()
+	game.printBoard()
