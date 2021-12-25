@@ -159,11 +159,16 @@ class Board:
 	# takes in Short algebraic notation
 	def move(self, move, side):
 		# decipher move, including allowing + symbol for checks
-		# allowing x symbol to not be included for captures
-		# allowing e8(Q) or e8/Q for promotion
+		# x symbol for captures
+		# = for draw or end game
 		piece_type = 0
 		start_pos = 0 # stores board indexes such as (4,3) for e4
 		end_pos = 0
+		promoted_piece = 0
+		capture_flag = 0
+		double_pawn = 0
+		en_passant = 0
+		castling = 0
 		
 		# check for castling rights
 		# get rid of old en passants and add new en passant if double move pawn
