@@ -26,6 +26,12 @@ class Piece(ABC):
 		if start == end:
 			return False
 
+	@staticmethod
+	@abstractmethod
+	def canCapture(board, side, target):
+		# returns piece pos' of opposite side that can capture target
+		pass
+
 class Queen(Piece):
 	def canmove(self, start, end):
 		super().canmove()
@@ -37,12 +43,127 @@ class Queen(Piece):
 			return True
 		return False
 
+	def canCapture(board, side, target):
+		enemy_pieces = ['Q','K','N','B','R','P']
+		if side == Side.WHITE:
+			enemy_pieces = [x.lower() for x in enemy_pieces]
+		result = []
+		enemy_piece = enemy_pieces[0]
+		increment_i = 1
+		increment_j = 1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != '-':
+				if temp_sq in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = -1
+		increment_j = 1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != '-':
+				if temp_sq in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = 1
+		increment_j = -1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != '-':
+				if temp_sq in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = -1
+		increment_j = -1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != '-':
+				if temp_sq in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+
+		# move like rook
+		increment_i = 1
+		increment_j = 0
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			if board[temp_pos[0]][temp_pos[1]] != '-':
+				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = 0
+		increment_j = 1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			if board[temp_pos[0]][temp_pos[1]] != '-':
+				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = -1
+		increment_j = 0
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			if board[temp_pos[0]][temp_pos[1]] != '-':
+				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = 0
+		increment_j = -1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			if board[temp_pos[0]][temp_pos[1]] != '-':
+				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+
+		return result
+
 class King(Piece):
 	def canmove(self, start, end):
 		super().canmove()
 		if abs(start[0]-end[0]) <= 1 and abs(start[0]-end[0]) <= 1:
 			return True
 		return False
+
+	def canCapture(board, side, target):
+		enemy_pieces = ['Q','K','N','B','R','P']
+		if side == Side.WHITE:
+			enemy_pieces = [x.lower() for x in enemy_pieces]
+		result = []
+		enemy_piece = enemy_pieces[1]
+		king_moves = [(target[0], target[1]+1), (target[0], target[1]-1), (target[0]+1, target[1]), (target[0]+1, target[1]+1),
+					(target[0]+1, target[1]-1), (target[0]-1, target[1]), (target[0]-1, target[1]+1), (target[0]-1, target[1]-1)]
+		for sq in king_moves:
+			if (0 <= sq[0] < len(board) and 0 <= sq[1] < len(board)) and board[sq[0]][sq[1]] == enemy_piece:
+				result.append(sq)
+
+		return result
 
 
 class Bishop(Piece):
@@ -51,6 +172,61 @@ class Bishop(Piece):
 		if abs(start[1]-end[1]) == abs(start[0]-end[0]):
 			return True
 		return False
+
+	def canCapture(board, side, target):
+		enemy_pieces = ['Q','K','N','B','R','P']
+		if side == Side.WHITE:
+			enemy_pieces = [x.lower() for x in enemy_pieces]
+		result = []
+		enemy_piece = enemy_pieces[3]
+		increment_i = 1
+		increment_j = 1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != '-':
+				if temp_sq in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = -1
+		increment_j = 1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != '-':
+				if temp_sq in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = 1
+		increment_j = -1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != '-':
+				if temp_sq in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = -1
+		increment_j = -1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != '-':
+				if temp_sq in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+
+		return result
 
 class Knight(Piece):
 	def canmove(self, start, end):
@@ -61,6 +237,20 @@ class Knight(Piece):
 			return True
 		return False
 
+	def canCapture(board, side, target):
+		enemy_pieces = ['Q','K','N','B','R','P']
+		if side == Side.WHITE:
+			enemy_pieces = [x.lower() for x in enemy_pieces]
+		result = []
+		enemy_piece = enemy_pieces[2]
+		knight_moves = [(target[0]+1, target[1]+2), (target[0]+1, target[1]-2), (target[0]-1, target[1]+2), (target[0]-1, target[1]+2),
+						(target[0]+2, target[1]+1), (target[0]+2, target[1]-1), (target[0]-2, target[1]+1), (target[0]-2, target[1]+1)]
+		for sq in knight_moves:
+			if (0 <= sq[0] < len(board) and 0 <= sq[1] < len(board)) and board[sq[0]][sq[1]] == enemy_piece:
+				result.append(sq)
+
+		return result
+
 class Rook(Piece):
 	def canmove(self, start, end):
 		super().canmove()
@@ -70,6 +260,57 @@ class Rook(Piece):
 			return True
 		return False
 
+	def canCapture(board, side, target):
+		enemy_pieces = ['Q','K','N','B','R','P']
+		if side == Side.WHITE:
+			enemy_pieces = [x.lower() for x in enemy_pieces]
+		result = []
+		enemy_piece = enemy_pieces[4]
+		increment_i = 1
+		increment_j = 0
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			if board[temp_pos[0]][temp_pos[1]] != '-':
+				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = 0
+		increment_j = 1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			if board[temp_pos[0]][temp_pos[1]] != '-':
+				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = -1
+		increment_j = 0
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			if board[temp_pos[0]][temp_pos[1]] != '-':
+				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
+
+		increment_i = 0
+		increment_j = -1
+		temp_pos = (target[0]+increment_i, target[1]+increment_j)
+		while (0 <= temp_pos[0] < len(board) and 0 <= temp_pos[1] < len(board)):
+			if board[temp_pos[0]][temp_pos[1]] != '-':
+				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+					result.append(temp_pos)
+				break
+			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+
+		return result
+
 class Pawn(Piece):
 	def canmove(self, start, end):
 		super().canmove()
@@ -78,6 +319,29 @@ class Pawn(Piece):
 		if abs(start[0] - end[0]) == 1 and (end[1] - start[1]) == 1:
 			return True
 		return False
+
+	def canCapture(board, side, target):
+		enemy_pieces = ['Q','K','N','B','R','P']
+		if side == Side.WHITE:
+			enemy_pieces = [x.lower() for x in enemy_pieces]
+		result = []
+		enemy_piece = enemy_pieces[5]
+		if side == Side.WHITE:
+			sq_1 = (target[0]+1, target[1]+1)
+			sq_2 = (target[0]-1, target[1]+1)
+			if (0 <= sq_1[0] < len(board) and 0 <= sq_1[1] < len(board) and board[sq_1[0]][sq_1[1]] == enemy_piece):
+				result.append(sq_1)
+			if (0 <= sq_2[0] < len(board) and 0 <= sq_2[0] < len(board) and board[sq_2[0]][sq_2[1]] == enemy_piece):
+				result.append(sq_2)
+		if side == Side.BLACK:
+			sq_1 = (target[0]+1, target[1]-1)
+			sq_2 = (target[0]-1, target[1]-1)
+			if (0 <= sq_1[0] < len(board) and 0 <= sq_1[1] < len(board) and board[sq_1[0]][sq_1[1]] == enemy_piece):
+				result.append(sq_1)
+			if (0 <= sq_2[0] < len(board) and 0 <= sq_2[1] < len(board) and board[sq_2[0]][sq_2[1]] == enemy_piece):
+				result.append(sq_2)
+
+		return result
 
 
 class Board:
@@ -93,19 +357,20 @@ class Board:
 		self.castle_rights = "KQkq" # Uppercase denotes White rights, '-' denotes no castling
 		self.turn = 'w'
 		if fen is not None:
-			# TODO Fix FEN Import
 			# import FEN Chess Notation
 			fields = fen.split()
 			lines = fields[0].split("/")
 			for i in range(len(lines)):
 				row = (len(self.board) - 1) - i
 				col = 0
-				for ch in lines:
+				for ch in lines[i]:
 					if ch.isnumeric():
+						# print("Incrementing col {} by {}".format(col, ch))
 						col += int(ch)
 					else:
+						# print("Assigning {} to ({},{})".format(ch, col, row))
 						self.board[col][row] = ch
-				col += 1
+						col += 1
 			self.turn = fields[1]
 			self.castle_rights = fields[2]
 			en_passant_targets = fields[3].lower()
@@ -139,23 +404,10 @@ class Board:
 	def contains(self, square, piece):
 		return self.board[square[0]][square[1]] == piece
 
-
-	def legalMove(self, start_pos, end_pos, piece_type):
-		# check if piece can legally move toward that position
-
-		# check if pawn is indeed capturing if moving diagonally or on starting pos if moving twice
-
-		# check if moving would place king in check
-
-		# check if move lands in empty square within board limits
-
-		# check if move is blocked by a piece
-		pass
-
 	def inCheck(self, board, side):
 		# locate king position
 		to_locate = ''
-		enemy_pieces = ['Q','K','N','B','R']
+		enemy_pieces = ['Q','K','N','B','R','P']
 		if side == Side.WHITE:
 			to_locate = 'K'
 			enemy_pieces = [x.lower() for x in enemy_pieces]
@@ -163,15 +415,18 @@ class Board:
 			to_locate = 'k'
 
 		king = ''
-		print("To locate: {}".format(to_locate))
+		# print("To locate: {}".format(to_locate))
 		for i in range(len(board)):
 			for j in range(len(board)):
 				if board[i][j] == to_locate:
 					king = (i,j)
 
+		# print("Printing king: {}".format(king))
+		# check if any piece can move into king's position
+
 		# check if pawns can capture king
+		enemy_piece = enemy_pieces[5]
 		if side == Side.WHITE:
-			print("Printing king: {}".format(king))
 			sq_1 = (king[0]+1, king[1]+1)
 			sq_2 = (king[0]-1, king[1]+1)
 			if (self.inBounds(sq_1) and self.contains(sq_1, enemy_piece)) or (self.inBounds(sq_2) and self.contains(sq_2, enemy_piece)):
@@ -182,13 +437,12 @@ class Board:
 			if (self.inBounds(sq_1) and self.contains(sq_1, enemy_piece)) or (self.inBounds(sq_2) and self.contains(sq_2, enemy_piece)):
 				return True
 
-		# check if any piece can move into king's position
 		# move like knight
 		enemy_piece = enemy_pieces[2]
 		knight_moves = [(king[0]+1, king[1]+2), (king[0]+1, king[1]-2), (king[0]-1, king[1]+2), (king[0]-1, king[1]+2),
 						(king[0]+2, king[1]+1), (king[0]+2, king[1]-1), (king[0]-2, king[1]+1), (king[0]-2, king[1]+1)]
 		for sq in knight_moves:
-			if (0 < sq[0] < 7) and (0 < sq[1] < 7) and board[sq[0]][sq[1]] == enemy_piece:
+			if self.inBounds(sq) and self.contains(sq, enemy_piece):
 				return True
 
 		# move like king
@@ -196,93 +450,105 @@ class Board:
 		king_moves = [(king[0], king[1]+1), (king[0], king[1]-1), (king[0]+1, king[1]), (king[0]+1, king[1]+1),
 					(king[0]+1, king[1]-1), (king[0]-1, king[1]), (king[0]-1, king[1]+1), (king[0]-1, king[1]-1)]
 		for sq in king_moves:
-			if (0 < sq[0] < 7) and (0 < sq[1] < 7) and board[sq[0]][sq[1]] == enemy_piece:
+			if self.inBounds(sq) and self.contains(sq, enemy_piece):
 				return True
 
 		# move like bishop
 		enemy_piece = (enemy_pieces[0], enemy_pieces[3])
 		increment_i = 1
 		increment_j = 1
-		temp_pos = (king[0] + increment_i, king[1] + increment_j)
-		while (0 < temp_pos[0] < 7) and (0 < temp_pos[1] < 7):
-			if temp_pos != self.blank_space:
-				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+		temp_pos = (king[0]+increment_i, king[1]+increment_j)
+		while self.inBounds(temp_pos):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != self.blank_space:
+				if temp_sq in enemy_piece:
 					return True
 				break
 			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
 
 		increment_i = -1
 		increment_j = 1
-		temp_pos = (king[0] + increment_i, king[1] + increment_j)
-		while (0 < temp_pos[0] < 7) and (0 < temp_pos[1] < 7):
-			if temp_pos != self.blank_space:
-				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+		temp_pos = (king[0]+increment_i, king[1]+increment_j)
+		while self.inBounds(temp_pos):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != self.blank_space:
+				if temp_sq in enemy_piece:
 					return True
 				break
 			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
 
 		increment_i = 1
 		increment_j = -1
-		temp_pos = (king[0] + increment_i, king[1] + increment_j)
-		while (0 < temp_pos[0] < 7) and (0 < temp_pos[1] < 7):
-			if temp_pos != self.blank_space:
-				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+		temp_pos = (king[0]+increment_i, king[1]+increment_j)
+		while self.inBounds(temp_pos):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != self.blank_space:
+				if temp_sq in enemy_piece:
 					return True
 				break
 			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
 
 		increment_i = -1
 		increment_j = -1
-		temp_pos = (king[0] + increment_i, king[1] + increment_j)
-		while (0 < temp_pos[0] < 7) and (0 < temp_pos[1] < 7):
-			if temp_pos != self.blank_space:
-				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
+		temp_pos = (king[0]+increment_i, king[1]+increment_j)
+		while self.inBounds(temp_pos):
+			temp_sq = board[temp_pos[0]][temp_pos[1]]
+			if temp_sq != self.blank_space:
+				if temp_sq in enemy_piece:
 					return True
 				break
 			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
 
 
 		# move like rook
 		enemy_piece = (enemy_pieces[0], enemy_pieces[4])
 		increment_i = 1
 		increment_j = 0
-		temp_pos = (king[0] + increment_i, king[1] + increment_j)
-		while (0 < temp_pos[0] < 7) and (0 < temp_pos[1] < 7):
-			if temp_pos != self.blank_space:
+		temp_pos = (king[0]+increment_i, king[1]+increment_j)
+		while self.inBounds(temp_pos):
+			if board[temp_pos[0]][temp_pos[1]] != self.blank_space:
 				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
 					return True
 				break
 			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
 
 		increment_i = 0
 		increment_j = 1
-		temp_pos = (king[0] + increment_i, king[1] + increment_j)
-		while (0 < temp_pos[0] < 7) and (0 < temp_pos[1] < 7):
-			if temp_pos != self.blank_space:
+		temp_pos = (king[0]+increment_i, king[1]+increment_j)
+		while self.inBounds(temp_pos):
+			if board[temp_pos[0]][temp_pos[1]] != self.blank_space:
 				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
 					return True
 				break
 			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
 
 		increment_i = -1
 		increment_j = 0
-		temp_pos = (king[0] + increment_i, king[1] + increment_j)
-		while (0 < temp_pos[0] < 7) and (0 < temp_pos[1] < 7):
-			if temp_pos != self.blank_space:
+		temp_pos = (king[0]+increment_i, king[1]+increment_j)
+		while self.inBounds(temp_pos):
+			if board[temp_pos[0]][temp_pos[1]] != self.blank_space:
 				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
 					return True
 				break
 			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
 
 		increment_i = 0
 		increment_j = -1
-		temp_pos = (king[0] + increment_i, king[1] + increment_j)
-		while (0 < temp_pos[0] < 7) and (0 < temp_pos[1] < 7):
-			if temp_pos != self.blank_space:
+		temp_pos = (king[0]+increment_i, king[1]+increment_j)
+		while self.inBounds(temp_pos):
+			if board[temp_pos[0]][temp_pos[1]] != self.blank_space:
 				if board[temp_pos[0]][temp_pos[1]] in enemy_piece:
 					return True
 				break
 			temp_pos = (temp_pos[0]+increment_i, temp_pos[1]+increment_j)
+			
 
 		return False
 
@@ -314,6 +580,18 @@ class Board:
 		# find end pos, check if it is a capture
 		# 
 		return (piece_type, start_pos, end_pos, promoted_piece, capture_flag, double_pawn, en_passant)
+
+	def legalMove(self, start_pos, end_pos, piece_type):
+		# check if piece can legally move toward that position
+
+		# check if pawn is indeed capturing if moving diagonally or on starting pos if moving twice
+
+		# check if moving would place king in check
+
+		# check if move lands in empty square within board limits
+
+		# check if move is blocked by a piece
+		pass
 
 	# takes in Short algebraic notation
 	def move(self, move, side):
@@ -383,6 +661,59 @@ if __name__ == "__main__":
 	# keeps track of side to move
 	# can import and export boards
 	# can end and begin games
-	game = Board("rnbqkbnr/pppp2pp/5p2/4p2Q/4P3/2N5/PPPP1PPP/R1B1KBNR b KQkq - 1 3")
+	# game = Board("4q3/r3b2n/3p1kp1/1p1bpp2/1Pp3P1/2P1BN2/2BN1P2/Q5K1 w - - 0 38")
+	# game.printBoard()
+	# print(game.inCheck(game.board, Side.BLACK))
+
+	game = Board("4q3/r3b2n/3p1kp1/1p1bpp2/1Pp3P1/2P1BN2/2BN1P2/Q5K1 w - - 0 38")
 	game.printBoard()
-	print(game.inCheck(game.board, Side.WHITE))
+	board = game.board
+	# print(Pawn.canCapture(board, Side.BLACK, (5,4)))
+	# print(Pawn.canCapture(board, Side.WHITE, (6,3)))
+	# print(Pawn.canCapture(board, Side.WHITE, (5,4)))
+	# print(Pawn.canCapture(board, Side.WHITE, (2,3)))
+	# print(Pawn.canCapture(board, Side.WHITE, (3,2)))
+
+	# print(Rook.canCapture(board, Side.WHITE, (0,0)))
+	# print(Rook.canCapture(board, Side.WHITE, (4,6)))
+	# print(Rook.canCapture(board, Side.WHITE, (5,6)))
+	# print(Rook.canCapture(board, Side.WHITE, (0,2)))
+	# print(Rook.canCapture(board, Side.WHITE, (1,5)))
+	# print(Rook.canCapture(board, Side.WHITE, (1,6)))
+	# print(Rook.canCapture(board, Side.BLACK, (0,0)))
+	# print(Rook.canCapture(board, Side.BLACK, (4,6)))
+	# print(Rook.canCapture(board, Side.BLACK, (5,6)))
+
+	# print(Bishop.canCapture(board, Side.WHITE, (5,2)))
+	# print(Bishop.canCapture(board, Side.WHITE, (6,1)))
+	# print(Bishop.canCapture(board, Side.WHITE, (2,3)))
+	# print(Bishop.canCapture(board, Side.WHITE, (1,2)))
+	# print(Bishop.canCapture(board, Side.WHITE, (1,4)))
+	# print(Bishop.canCapture(board, Side.BLACK, (0,6)))
+	# print(Bishop.canCapture(board, Side.BLACK, (5,4)))
+	# print(Bishop.canCapture(board, Side.BLACK, (6,5)))
+	# print(Bishop.canCapture(board, Side.BLACK, (7,6)))
+	# print(Bishop.canCapture(board, Side.BLACK, (4,0)))
+
+	# print(Queen.canCapture(board, Side.BLACK, (0,6))) # yes
+	# print(Queen.canCapture(board, Side.BLACK, (0,7))) # No
+	# print(Queen.canCapture(board, Side.BLACK, (2,2))) # yes
+	# print(Queen.canCapture(board, Side.BLACK, (3,3))) # no
+	# print(Queen.canCapture(board, Side.BLACK, (6,0))) # yes
+	# print(Queen.canCapture(board, Side.BLACK, (7,0))) # no
+	# print(Queen.canCapture(board, Side.WHITE, (0,6)))
+	# print(Queen.canCapture(board, Side.WHITE, (2,2)))
+
+	print(King.canCapture(board, Side.BLACK, (4,4))) # no
+	print(King.canCapture(board, Side.BLACK, (6,0))) # no
+	print(King.canCapture(board, Side.BLACK, (7,0))) # yes
+	print(King.canCapture(board, Side.BLACK, (5,0))) # yes
+	print(King.canCapture(board, Side.BLACK, (5,1)))
+	print(King.canCapture(board, Side.BLACK, (6,1)))
+	print(King.canCapture(board, Side.BLACK, (7,1)))
+	print(King.canCapture(board, Side.BLACK, (4,1))) # no
+	print(King.canCapture(board, Side.WHITE, (4,4)))
+	print(King.canCapture(board, Side.WHITE, (5,4)))
+	print(King.canCapture(board, Side.WHITE, (5,5))) # no
+	print(King.canCapture(board, Side.WHITE, (5,6)))
+	print(King.canCapture(board, Side.WHITE, (5,7))) # no
