@@ -558,6 +558,11 @@ class Board:
 		pass
 
 	def decipher(self, move, side):
+		# move is guaranteed not to be castle
+		# side indicates who is to move
+		# col_index_convert = ['a','b','c','d','e','f','g','h']
+		# major_pieces = {"K", "Q", "N", "B", "R"}
+
 		piece_type = -1
 		start_pos = -1 # stores board indexes such as (4,3) for e4
 		end_pos = -1
@@ -565,6 +570,35 @@ class Board:
 		capture_flag = False
 		double_pawn = False
 		en_passant = -1
+
+		# For major piece move,
+		if move[0] in self.major_pieces:
+			major_piece_type = move[0]
+			if side == Side.BLACK:
+				major_piece_type = major_piece_type.lower()
+
+			if len(move) == 3:
+				end_pos = (col_index_convert.find(move[1]), int(move[2]))
+			if len(move) == 4:
+				end_pos = (col_index_convert.find(move[2]), int(move[3]))
+				if not move[1].isnumeric():
+					file = col_index_convert.find(move[1])
+					for rank in range(len(self.board[0])):
+						if self.board[file][rank] == major_piece_type:
+							start_pos = (file, rank)
+							break
+				else:
+					rank = int(move[1])
+					for file in range(len(self.board)):
+						if self.board[file][rank] == major_piece_type:
+							start_pos = (file, rank)
+							break
+			if len(move) == 5:
+				end_pos = (col_index_convert.find(move[3]), int(move[4]))
+				start_pos = (col_index_convert.find(move[1]), int(move[2]))
+				
+		# Get piece type
+		# find end pos, check if it is a capture
 
 		# Check for Pawn move
 		# set capture if contains 'x'
@@ -575,10 +609,7 @@ class Board:
 		# check for promotion
 		# check for double pawn move
 
-		# For major piece move,
-		# Get piece type
-		# find end pos, check if it is a capture
-		# 
+		 
 		return (piece_type, start_pos, end_pos, promoted_piece, capture_flag, double_pawn, en_passant)
 
 	def legalMove(self, start_pos, end_pos, piece_type):
@@ -633,6 +664,7 @@ class Board:
 		# make move and update previous space as self.blank_space
 		# update halfmove clock
 		# update active color
+		# check for repetition
 
 		# record in log
 
@@ -668,52 +700,3 @@ if __name__ == "__main__":
 	game = Board("4q3/r3b2n/3p1kp1/1p1bpp2/1Pp3P1/2P1BN2/2BN1P2/Q5K1 w - - 0 38")
 	game.printBoard()
 	board = game.board
-	# print(Pawn.canCapture(board, Side.BLACK, (5,4)))
-	# print(Pawn.canCapture(board, Side.WHITE, (6,3)))
-	# print(Pawn.canCapture(board, Side.WHITE, (5,4)))
-	# print(Pawn.canCapture(board, Side.WHITE, (2,3)))
-	# print(Pawn.canCapture(board, Side.WHITE, (3,2)))
-
-	# print(Rook.canCapture(board, Side.WHITE, (0,0)))
-	# print(Rook.canCapture(board, Side.WHITE, (4,6)))
-	# print(Rook.canCapture(board, Side.WHITE, (5,6)))
-	# print(Rook.canCapture(board, Side.WHITE, (0,2)))
-	# print(Rook.canCapture(board, Side.WHITE, (1,5)))
-	# print(Rook.canCapture(board, Side.WHITE, (1,6)))
-	# print(Rook.canCapture(board, Side.BLACK, (0,0)))
-	# print(Rook.canCapture(board, Side.BLACK, (4,6)))
-	# print(Rook.canCapture(board, Side.BLACK, (5,6)))
-
-	# print(Bishop.canCapture(board, Side.WHITE, (5,2)))
-	# print(Bishop.canCapture(board, Side.WHITE, (6,1)))
-	# print(Bishop.canCapture(board, Side.WHITE, (2,3)))
-	# print(Bishop.canCapture(board, Side.WHITE, (1,2)))
-	# print(Bishop.canCapture(board, Side.WHITE, (1,4)))
-	# print(Bishop.canCapture(board, Side.BLACK, (0,6)))
-	# print(Bishop.canCapture(board, Side.BLACK, (5,4)))
-	# print(Bishop.canCapture(board, Side.BLACK, (6,5)))
-	# print(Bishop.canCapture(board, Side.BLACK, (7,6)))
-	# print(Bishop.canCapture(board, Side.BLACK, (4,0)))
-
-	# print(Queen.canCapture(board, Side.BLACK, (0,6))) # yes
-	# print(Queen.canCapture(board, Side.BLACK, (0,7))) # No
-	# print(Queen.canCapture(board, Side.BLACK, (2,2))) # yes
-	# print(Queen.canCapture(board, Side.BLACK, (3,3))) # no
-	# print(Queen.canCapture(board, Side.BLACK, (6,0))) # yes
-	# print(Queen.canCapture(board, Side.BLACK, (7,0))) # no
-	# print(Queen.canCapture(board, Side.WHITE, (0,6)))
-	# print(Queen.canCapture(board, Side.WHITE, (2,2)))
-
-	print(King.canCapture(board, Side.BLACK, (4,4))) # no
-	print(King.canCapture(board, Side.BLACK, (6,0))) # no
-	print(King.canCapture(board, Side.BLACK, (7,0))) # yes
-	print(King.canCapture(board, Side.BLACK, (5,0))) # yes
-	print(King.canCapture(board, Side.BLACK, (5,1)))
-	print(King.canCapture(board, Side.BLACK, (6,1)))
-	print(King.canCapture(board, Side.BLACK, (7,1)))
-	print(King.canCapture(board, Side.BLACK, (4,1))) # no
-	print(King.canCapture(board, Side.WHITE, (4,4)))
-	print(King.canCapture(board, Side.WHITE, (5,4)))
-	print(King.canCapture(board, Side.WHITE, (5,5))) # no
-	print(King.canCapture(board, Side.WHITE, (5,6)))
-	print(King.canCapture(board, Side.WHITE, (5,7))) # no
