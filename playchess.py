@@ -764,17 +764,17 @@ class Board:
 		# locate king position
 		to_locate = ''
 		enemy_pieces = ['Q','K','N','B','R','P']
-		if side == Side.WHITE:
+		if self.turn == Side.WHITE:
 			to_locate = 'K'
 			enemy_pieces = [x.lower() for x in enemy_pieces]
-		if side == Side.BLACK:
+		if self.turn == Side.BLACK:
 			to_locate = 'k'
 
 		king = ''
 		# print("To locate: {}".format(to_locate))
-		for i in range(len(board)):
-			for j in range(len(board)):
-				if board[i][j] == to_locate:
+		for i in range(len(self.board)):
+			for j in range(len(self.board)):
+				if self.board[i][j] == to_locate:
 					king = (i,j)
 
 		end_poses = [(king[0]+1, king[1]+1), (king[0]+1, king[1]), (king[0]+1, king[1]-1), (king[0], king[1]+1), (king[0], king[1]-1), (king[0]-1, king[1]+1), (king[0]-1, king[1]), (king[0]-1, king[1]-1)]
@@ -1050,10 +1050,27 @@ if __name__ == "__main__":
 	# can import and export boards
 	# can end and begin games
 
-	# moves = ["Qd3", "Qdd3", "Q2d6", "Qbd3", "Qd2d3", "Nh2", "Ng3", "N3h2"]
-	# testDecipher(moves, "r4rk1/1qnbPppp/1b1p4/1p2p2n/1P1QP3/1Q2BN1P/R2Q1PP1/RN3NK1 w - - 0 1")
+	
+	# moves = ["0-0", "0-0-0", "Qe7"]
+	# testMove(moves, "r3k2r/pppq1ppp/2npbn2/2b1p3/2B1P3/2NPBN2/PPP1QPPP/R3K2R b KQkq - 7 8")
 
-	# moves = ["Qd3", "Qdd3", "Q2d6", "Qbd3", "Qd2d3", "Nh2", "Ng3", "N3h2"]
-	moves = ["0-0", "0-0-0", "Qe7"]
-	testMove(moves, "r3k2r/pppq1ppp/2npbn2/2b1p3/2B1P3/2NPBN2/PPP1QPPP/R3K2R b KQkq - 7 8")
+	fen = None
+	in_ = input("Paste FEN if you have one, else type NA\n")
+	if in_.upper() != "NA":
+		fen = in_
+	game = Board(fen)
+	
+	move = input("Give me a move or type printboard\n")
+	if move.lower() == "printboard":
+		game.printBoard()
+	else:
+		result = game.move(move, game.turn)
+	while not isinstance(result, Result):
+		move = input("Give me a move or type printboard\n")
+		if move.lower() == "printboard":
+			game.printBoard()
+		else:
+			result = game.move(move, game.turn)
+
+	print(result)
 
