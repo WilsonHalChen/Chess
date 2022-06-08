@@ -830,7 +830,7 @@ class Board:
 				raise Exception("Castling flag raised, but move is not a valid castle")
 			if side == Side.BLACK:
 				king = king.lower()
-				permission = check.lower()
+				permission = permission.lower()
 				king_row = 7
 
 			# does king have castling rights?
@@ -921,7 +921,7 @@ class Board:
 			self.enpassant = double_pawn
 
 		# update halfmove clock
-		if capture_flag or piece_type.upper() == 'P':
+		if capture_flag or piece_type == 'P':
 			self.half_moves = 0
 		else:
 			self.half_moves += 1
@@ -960,7 +960,7 @@ class Board:
 		
 
 	def exportFEN(self):
-		piece_placement = ""
+		piece_placement = []
 		for i in range(len(self.board[0])-1, -1, -1):
 			
 			j = 0
@@ -978,6 +978,8 @@ class Board:
 				j += 1
 			if i != 0:
 				piece_placement.append('/')
+
+		piece_placement = "".join(piece_placement)
 
 		active_color = str(self.turn)
 		castling_rights = self.castle_rights
@@ -1032,19 +1034,15 @@ def testDecipher(moves, FEN):
 
 def testMove(moves, FEN):
 	game = Board(FEN)
-	board_copy = [col[:] for col in game.board]
 	print("Starting position ", end='')
 	game.printBoard()
 	print()
 
 	for move in moves:
-		try:
-			game.move(move, game.turn)
-			game.printBoard()
-			print()
-			game.board = [col[:] for col in board_copy]
-		except Exception as e:
-			print("Raise {}: {}".format(type(e), str(e)))
+		game.move(move, game.turn)
+		game.printBoard()
+		print()
+		game = Board(FEN)
 
 if __name__ == "__main__":
 	# Asks for move 
